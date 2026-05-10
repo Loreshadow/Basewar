@@ -1,3 +1,16 @@
+  <h3 align="center">Basewar Gamemode</h3>
+
+  <p align="center">
+    A Basewar gamemode base off the original sandbox gamemode from <a href="https://sbox.facepunch.com">s&box</a>.
+    <br />
+    <strong>Still a work in progress </strong>
+  </p>
+</div>
+<br/>
+
+
+
+
 <div align="center">
   <a href="https://github.com/Facepunch/sandbox">
     <img src="https://cdn.sbox.game/org/facepunch/sandbox/thumb/8d0a5169-0ce3-4520-b9e7-23bcafddf7fc.png" alt="Logo" width="450">
