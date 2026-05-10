@@ -1,7 +1,7 @@
   <h3 align="center">Basewar Gamemode</h3>
 
   <p align="center">
-    A Basewar gamemode base off the original sandbox gamemode from <a href="https://sbox.facepunch.com">s&box</a>.
+    A Basewar gamemode base off the original sandbox gamemode for <a href="https://sbox.facepunch.com">s&box</a>.
     <br />
     <strong>Still a work in progress </strong>
   </p>
