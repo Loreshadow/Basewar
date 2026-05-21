@@ -81,14 +81,6 @@ public sealed partial class Player : Component, Component.IDamageable, PlayerCon
 		{
 			t.GameObject.Destroy();
 		}
-
-		// Apply height from dresser to match camera with visual height
-		if ( Body.IsValid() )
-		{
-			var dresser = Body.GetComponentInChildren<Dresser>( true );
-			if ( dresser.IsValid() )
-				ApplyHeightFromDresser( dresser );
-		}
 	}
 
 	protected override void OnDestroy()
@@ -182,6 +174,8 @@ public sealed partial class Player : Component, Component.IDamageable, PlayerCon
 		if ( !Controller.Renderer.IsValid() )
 			return;
 
+		var batch = Scene.BatchGroup();
+
 		var go = new GameObject( true, "Ragdoll" );
 		go.Tags.Add( "ragdoll" );
 		go.WorldTransform = WorldTransform;
@@ -206,21 +200,21 @@ public sealed partial class Player : Component, Component.IDamageable, PlayerCon
 		var physics = go.Components.Create<ModelPhysics>();
 		physics.Model = mainBody.Model;
 		physics.Renderer = mainBody;
+		batch.Dispose();
+
 		physics.CopyBonesFrom( Controller.Renderer, true );
 
-		ApplyRagdollForce( physics, velocity, origin );
-		
 		var corpse = go.AddComponent<DeathCameraTarget>();
 		corpse.Connection = Network.Owner;
 		corpse.Created = DateTime.Now;
 
 		CopyBoneScalesToRagdoll( go );
+
+		ApplyRagdollForce( physics, velocity, origin );
 	}
 
-	async void ApplyRagdollForce( ModelPhysics physics, Vector3 force, Vector3 origin )
+	void ApplyRagdollForce( ModelPhysics physics, Vector3 force, Vector3 origin )
 	{
-		await GameTask.Delay( 10 );
-
 		if ( !physics.IsValid() ) return;
 		if ( force.Length < 1 ) return;
 
@@ -339,10 +333,10 @@ public sealed partial class Player : Component, Component.IDamageable, PlayerCon
 			if ( _timeSinceJumpPressed < 0.3f )
 			{
 				if ( GetComponent<NoclipMoveMode>( true ) is { } noclip )
-					{
-						noclip.Enabled = !noclip.Enabled;
-						IsNoclipping = noclip.Enabled;
-					}
+				{
+					noclip.Enabled = !noclip.Enabled;
+					IsNoclipping = noclip.Enabled;
+				}
 			}
 
 			_timeSinceJumpPressed = 0;
@@ -504,16 +498,6 @@ public sealed partial class Player : Component, Component.IDamageable, PlayerCon
 	private async Task ReapplyClothingAfterLoad( Dresser dresser )
 	{
 		await dresser.Apply();
-		ApplyHeightFromDresser( dresser );
 		GameObject.Network.Refresh();
-	}
-
-	private void ApplyHeightFromDresser( Dresser dresser )
-	{
-		if ( !Controller.IsValid() ) return;
-		if ( !dresser.ApplyHeightScale ) return;
-
-		var heightScale = dresser.ManualHeight.Remap( 0, 1, 0.8f, 1.2f, true );
-		Controller.BodyHeight = 72f * heightScale;
 	}
 }
